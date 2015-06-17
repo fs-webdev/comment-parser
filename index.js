@@ -9,6 +9,7 @@ var RE_COMMENT_START = /^\s*\/\*\*\s*$/m;
 var RE_COMMENT_LINE  = /^\s*\*(?:\s|$)/m;
 var RE_COMMENT_END   = /^\s*\*\/\s*$/m;
 var RE_COMMENT_1LINE = /^\s*\/\*\*\s*(.*)\s*\*\/\s*$/;
+var RE_TRIM_RIGHT = /^[\n]+|[\s\uFEFF\xA0]+$/g;
 
 /* ------- util functions ------- */
 
@@ -192,7 +193,7 @@ function parse_block(source, opts) {
   // we assume tag starts with "@"
   source = source
     .reduce(function(tags, line) {
-      line.source = line.source.trim();
+      line.source = line.source.replace(RE_TRIM_RIGHT, '');
       
       if (line.source.match(/^@(\w+)/)) { 
         tags.push({source: [line.source], line: line.number});
@@ -204,7 +205,7 @@ function parse_block(source, opts) {
       return tags;
     }, [{source: []}])
     .map(function(tag) {
-      tag.source = tag.source.join('\n').trim();
+      tag.source = tag.source.join('\n').replace(RE_TRIM_RIGHT, '');
       return tag;
     });
 
